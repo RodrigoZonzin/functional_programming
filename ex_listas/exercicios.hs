@@ -47,3 +47,13 @@ iniciais (a:b) = separar a ++ iniciais (separar b)
 
 apenas_letras [] = []
 apenas_letras (a:b) = if isChar a then a: apenas_letras(b) else apenas_letras b  
+
+-- Ex 7
+--[1, 2, 3, 4, 5, 6] 2 |-> [[1, 2], [3, 4], [5, 6]] 
+divLista :: [a] -> Int -> [[b]]
+divLista [] _ = []
+divLista t n = take t n : divLista t (drop t n)
+
+
+
+

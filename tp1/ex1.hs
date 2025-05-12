@@ -42,3 +42,55 @@ index x = indexAux 0
     indexAux i (y:ys)
       | x == y = Just i
       | otherwise = indexAux (i + 1) ys
+
+--elemento :: [a] -> Int -> a
+--elemento [] _ = Nothing
+--elemento (h:t) idx 
+--  | idx < 0 = Nothing
+--  | idx == 0 = Just h 
+--  | otherwise = elemento t (idx-1)
+
+-- Exemplo de funcionamento: 
+-- elemento [1, 20, 41, 34, 56] 2
+-- idx < 0 False 
+-- idx == 0 False 
+--    elemento [20, 41, 34, 56] 1
+--    idx < 0 False
+--    idx == 0 False
+--       elemento [41, 34, 56] 0
+--        idx < 0 False
+--        idx == 0 True = 41
+
+
+--Crie a função addProduto que recebe uma lista de Produto e um Produto e
+-- retorna a lista com o produto adicionado no final. Crie a função remProduto que recebe uma lista
+-- de Produto e um Nome e retorna a lista sem o produto com nome passado. Crie a função
+-- buscaProduto que recebe uma lista de Produto e um Nome e retorna um Maybe Produto, que será
+-- o produto da lista possui aquele nome ou Nothing (ver tipo Maybe).
+
+addProduto :: [Produto] -> Produto -> [Produto]
+addProduto [] p = p:[]
+addProduto (h:t) p = h : addProduto t p
+
+-- addProduto [Carro, Placa, Lapis, Arroz] Mesa |-> 
+-- Carro [Placa, Lapis, Arroz] Mesa
+-- t == [] False addProduto t Mesa 
+  -- Placa [Lapis, Arroz] Mesa 
+  -- t == [] False addProduto t Mesa 
+    -- Lapis [Arroz] Mesa
+    -- t == [] False addProduto t Mesa
+      --Arroz [] Mesa
+      -- t == [] True Mesa:[]
+
+      -- e daí volta concatenando com as anteriores 
+
+remProduto :: [Produto] -> Produto -> [Produto]
+remProduto [] _ = []
+remProduto (h:t) p 
+  | h == p = remProduto t p
+  | otherwise = h: remProduto t p
+
+-- remProduto [Carro, Placa, Lapis, Arroz] Placa |-> 
+-- h : remProduto [Placa, Lapis, Arroz]
+-- if h == prod remProduto t prod
+

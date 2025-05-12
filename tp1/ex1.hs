@@ -112,9 +112,10 @@ alinhaEsq [] _ _ = []
 alinhaEsq _ _ 0  = []
 
 alinhaEsq str c n = str ++ alinhaEsq_aux c n 
-  where alinhaEsq_aux
-    | alinhaEsq_aux _ 0 = []
-    | alinhaEsq_aux c n = c : alinhaEsq_aux c (n-1) 
+  where 
+    alinhaEsq_aux :: Char -> Int -> String
+    alinhaEsq_aux _ 0 = []
+    alinhaEsq_aux c n = c : alinhaEsq_aux c (n-1) 
 
 --alinhaEsq "Rodrigo" '.' 4
 --"Rodrigo" ++ alinhaEsq_aux '.' 4
@@ -129,3 +130,34 @@ alinhaEsq str c n = str ++ alinhaEsq_aux c n
 --"Rodrigo" ++ ....
 --"Rodrigo"....
 
+alinhaDir :: String -> Char -> Int -> String
+alinhaDir [] _ _  = []
+alinhaDir _ _ 0   = []
+alinhaDir str ch n =  (alinhaDIrAux ch n) ++ str 
+  where 
+    alinhaDIrAux :: Char -> Int -> String
+    alinhaDIrAux _ 0 = []
+    alinhaDIrAux ch n = ch : alinhaDIrAux ch (n-1)
+
+
+--"####...##" ++ "Rodrigo"
+
+infix 5 $$
+($$) :: Valor -> Int -> String
+val $$ n =
+  let (intPart, fracPart) = properFraction val         -- separa parte inteira e decimal
+      fracStr = take n $ (drop 2 . show) (val - fromIntegral intPart + 1)  -- pega parte decimal como string
+      paddedFrac = take n (fracStr ++ repeat '0')      -- completa com zeros se necessário
+  in show intPart ++ if n > 0 then "." ++ paddedFrac else ""
+
+dinheiro :: Valor -> String
+dinheiro val = '$' : (val $$ 2)
+
+
+
+formataItem :: Item -> String
+formataItem ((n, v), q) =
+  alinhaEsq n '.' (45 - length n)
+  ++ dinheiro v ++ " x "
+  ++ show q ++ " = "
+  ++ dinheiro (v * fromIntegral q)

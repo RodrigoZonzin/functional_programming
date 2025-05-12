@@ -11,6 +11,10 @@ type Quantidade = Int
 type Produto = (Nome, Valor)
 type Item = (Produto, Quantidade)
 
+-- Criei esse operador para comparar elementos do tipo Produto 
+-- como Produto = (Nome, Valor), p1 e p2 in Produto <==> p1.nome == p2.nome e p1,valor == p2.valor
+(==.) :: Produto -> Produto -> Bool
+(==.) (n1, v1) (n2, v2) = if (n1 == n2) && (v2 == v2) then True else False
 
 produtos :: [Produto]
 produtos = [(("Punto 2018", 52000.7)), 
@@ -84,13 +88,44 @@ addProduto (h:t) p = h : addProduto t p
 
       -- e daí volta concatenando com as anteriores 
 
+
 remProduto :: [Produto] -> Produto -> [Produto]
 remProduto [] _ = []
-remProduto (h:t) p 
-  | h == p = remProduto t p
-  | otherwise = h: remProduto t p
+remProduto (h:t) prod 
+  | h ==. prod = remProduto t prod
+  | otherwise = h: remProduto t prod
 
 -- remProduto [Carro, Placa, Lapis, Arroz] Placa |-> 
 -- h : remProduto [Placa, Lapis, Arroz]
 -- if h == prod remProduto t prod
+
+buscaProduto :: [Produto] -> Produto -> Maybe Produto
+buscaProduto [] _ = Nothing
+buscaProduto (h:t) prod
+  | h ==. prod = Just prod
+  | otherwise  = buscaProduto t prod
+
+
+--
+alinhaEsq :: String -> Char -> Int -> String
+alinhaEsq [] _ _ = []
+alinhaEsq _ _ 0  = []
+
+alinhaEsq str c n = str ++ alinhaEsq_aux c n 
+  where alinhaEsq_aux
+    | alinhaEsq_aux _ 0 = []
+    | alinhaEsq_aux c n = c : alinhaEsq_aux c (n-1) 
+
+--alinhaEsq "Rodrigo" '.' 4
+--"Rodrigo" ++ alinhaEsq_aux '.' 4
+--"Rodrigo" ++ . ++ alinhaEsq_aux '.' 3
+--"Rodrigo" ++ . ++ . ++ alinhaEsq_aux '.' 2
+--"Rodrigo" ++ . ++ . ++ . ++ alinhaEsq_aux '.' 1
+--"Rodrigo" ++ . ++ . ++ . ++ . ++ alinhaEsq_aux '.' 0
+--"Rodrigo" ++ . ++ . ++ . ++ . ++ ''
+--"Rodrigo" ++ . ++ . ++ . ++ .
+--"Rodrigo" ++ . ++ . ++ ..
+--"Rodrigo" ++ . ++ ...
+--"Rodrigo" ++ ....
+--"Rodrigo"....
 

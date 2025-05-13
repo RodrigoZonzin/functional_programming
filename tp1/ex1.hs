@@ -2,7 +2,7 @@ import Data.List
 
 -- Crie os tipos: Nome, equivalente a String; Valor, equivalente a Float;
 -- Quantidade, equivalente a Int; Produto, com nome e valor; Item, 
--- com produto e quantidade. Crieuma função chamada produtos que retorna
+-- com produto e quantidade. Crie uma função chamada produtos que retorna
 -- uma lista com 10 produtos a sua escolha.
 
 type Nome = String
@@ -145,14 +145,13 @@ alinhaDir str ch n =  (alinhaDIrAux ch n) ++ str
 infix 5 $$
 ($$) :: Valor -> Int -> String
 val $$ n =
-  let (intPart, fracPart) = properFraction val         -- separa parte inteira e decimal
-      fracStr = take n $ (drop 2 . show) (val - fromIntegral intPart + 1)  -- pega parte decimal como string
-      paddedFrac = take n (fracStr ++ repeat '0')      -- completa com zeros se necessário
+  let (intPart, fracPart) = properFraction val                              -- separa parte inteira e decimal
+      fracStr = take n $ (drop 2 . show) (val - fromIntegral intPart + 1)   -- pega parte decimal como string
+      paddedFrac = take n (fracStr ++ repeat '0')                           -- completa com zeros se necessario
   in show intPart ++ if n > 0 then "." ++ paddedFrac else ""
 
 dinheiro :: Valor -> String
 dinheiro val = '$' : (val $$ 2)
-
 
 
 formataItem :: Item -> String
@@ -161,3 +160,60 @@ formataItem ((n, v), q) =
   ++ dinheiro v ++ " x "
   ++ show q ++ " = "
   ++ dinheiro (v * fromIntegral q)
+
+formataItens :: [Item] -> String
+formataItens []     = []
+formataItens (h:t)  = formataItem h ++ "\n" ++ formataItens t
+
+--[(("Punto", 25.56), 3), (("Arroz", 14.2), 2), (("Torrada", 13.2), 4)]
+-- h = (("Punto", 25.56), 3)
+--total [] = 0
+--total (h:t) = ((snd h)*(snd fst h)) + total t
+
+
+total :: [Item] -> String
+total [] =  dinheiro 0.0
+total a =  dinheiro (total_parcial a)
+  where 
+    total_parcial :: [Item] -> Valor
+    total_parcial [] =  0.0
+    total_parcial (((n, v), quantidade):t) =  ((v * fromIntegral quantidade) + total_parcial t )
+
+notafiscal :: [Item] -> String
+notafiscal itens = ((alinhaEsq "*"  '*' 78) ++ "\n" 
+                          ++ (alinhaDir "NOTA FISCAL" ' ' 36) ++ "\n" --isso aqui foi no olhometro
+                          ++ (alinhaEsq "*"  '*' 78) ++ "\n" 
+                          ++ formataItens itens ++ "\n"
+                          ++ (alinhaEsq "*"  '*' 78) ++ "\n"
+                          ++ (alinhaDir (total itens) ' ' 70) ++ "\n"
+                          ++ (alinhaEsq "*"  '*' 78) ++ "\n")
+                          
+--proditem :: -> [Item] 
+--proditemx :: [Quantidade] -> [Item] 
+-- Crie a função proditem que não possui entradas e retorna uma lista de Item
+-- contendo todos os elementos da lista produtos e a quantidade sendo o índice de cada produto na lista
+-- zip [a, b, c, d] [1, 2, 3, 4] |-> [(a, 1), (b, 2), (c,3), (d,4)]
+proditem :: [Item]
+proditem = zip produtos [0 .. length produtos]
+
+proditemx :: [Quantidade] -> [Item]
+proditemx qs = zip (take (length qs) produtos) qs
+--retira (lenght qs) elementos da lista produtos e faz o zip  
+
+-- Crie a função chamada itensn que recebe uma lista da tupla(Nome,Quantidade) 
+-- e retorna uma lista do tipo Item, com os produtos identificados a partir do nome na 
+-- lista produtos. 
+itensn :: [(Nome, Quantidade)] -> [Item]
+itensn [] = []
+-- Nao entendi o que "produtos identificados a partir do nome na lista produtos" significa 
+
+
+-- [(0, 5), (1, 1), (2, 3)] |-> [(("Punto 2018", 52000.7), 5), (("Lapis", 0.98), 1), ..]
+itensi :: [(Int, Quantidade)] ->  [Item]
+itensi [] = []
+itensi ((int, qtd):t)  
+  | int >= 0 && int < length produtos = (produtos !! int, qtd) : itensi t 
+  | otherwise = itensi t
+
+venda :: [Item] -> IO ()
+venda itens = putStrLn (notafiscal itens)

@@ -1,3 +1,5 @@
-import Aluno, Data, Livro
+module Emprestimo where 
 
-data Emprestimo = Ep {numero :: Int, al: Aluno, dtEm :: Data, dtDev :: Data, livros :: [Livro]}
+    import Aluno, Data, Livro
+
+    data Emprestimo = Ep {numero :: Int, al: Aluno, dtEm :: Data, dtDev :: Data, livros :: [Livro]}
